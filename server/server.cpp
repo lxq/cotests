@@ -20,6 +20,7 @@ int main(int argc, char** argv)
     
     server->waitEQ(true);
 
+    server->close();
     server = 0;
 
     co::exit();
