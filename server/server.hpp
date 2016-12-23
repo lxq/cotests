@@ -2,6 +2,7 @@
 
 
 #include <co/co.h>
+#include <lunchbox/monitor.h>
 
 enum Commands
 {
@@ -20,17 +21,25 @@ public:
     Server()
         : _gotAsync( false )
         , _counter( 0 )
+        , _monitor(false)
     {
         co::CommandQueue* q = getCommandThreadQueue();
         registerCommand( CMD_ASYNC, CmdFunc( this, &Server::_cmdAsync ), q );
         registerCommand( CMD_SYNC, CmdFunc( this, &Server::_cmdSync ), q );
         registerCommand( CMD_DATA, CmdFunc( this, &Server::_cmdData ), q );
         registerCommand( CMD_DATA_REPLY,CmdFunc( this, &Server::_cmdDataReply ), q );
+        registerCommand( CMD_EXIT_SERVER,CmdFunc( this, &Server::_cmdExit ), q );
     }
 
+    void waitEQ(bool v)
+    {
+        _monitor.waitEQ(v);
+    }
+    
 private:
     bool _gotAsync;
     uint32_t _counter;
+    lunchbox::Monitor<bool> _monitor;
 
     bool _cmdAsync( co::ICommand& )
     {
@@ -61,6 +70,13 @@ private:
         const uint32_t result = command.get< uint32_t >();
         //TEST( result == ++_counter );
         serveRequest( request, result );
+        return true;
+    }
+
+    bool _cmdExit(co::ICommand& command)
+    {
+        _monitor.set(true);
+
         return true;
     }
 
