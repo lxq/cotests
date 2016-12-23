@@ -17,7 +17,8 @@ int main(int argc, char** argv)
     server->addConnectionDescription(connDesc);
 
     server->listen();
-    //co::NodePtr proxy
+    
+    server->waitEQ(true);
 
     server = 0;
 
