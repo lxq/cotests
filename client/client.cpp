@@ -4,6 +4,17 @@
 
 #include <co/co.h>
 
+enum Commands
+{
+    CMD_ASYNC = co::CMD_NODE_CUSTOM,
+    CMD_SYNC,
+    CMD_DATA,
+    CMD_DATA_REPLY,
+    CMD_EXIT_SERVER
+};
+
+static const std::string payload( "Hi! I am your payload. " );
+
 int main(int argc, char** argv)
 {
     co::init(argc, argv);
@@ -26,6 +37,27 @@ int main(int argc, char** argv)
 
     client->connect(serverProxy);
 
+    // send  cmd for testing
+    serverProxy->send(CMD_ASYNC);
+
+    {
+        // send for request 
+        uint32_t request = client->registerRequest();
+        serverProxy->send(CMD_SYNC) << request;
+        client->waitRequest(request);
+    }
+
+    {
+        lunchbox::Request<void> request = client->registerRequest<void>();
+        serverProxy->send(CMD_SYNC)<<request;
+    }
+
+    {
+        lunchbox::Request<uint32_t> request = client->registerRequest<uint32_t>();
+        serverProxy->send(CMD_DATA) <<request <<payload;
+    }
+
+    client->disconnect(serverProxy);
     client->close();
     client = 0;
 
