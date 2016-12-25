@@ -43,29 +43,30 @@ private:
 
     bool _cmdAsync( co::ICommand& )
     {
+        std::cout<< "Received CMD_ASYNC."<< std::endl;
         _gotAsync = true;
         return true;
     }
 
     bool _cmdSync( co::ICommand& command )
     {
-        //TEST( _gotAsync );
+        std::cout<< "Received CMD_SYNC."<< std::endl;
         ackRequest( command.getNode(), command.get< uint32_t >( ));
         return true;
     }
 
     bool _cmdData( co::ICommand& command )
     {
-        //TEST( _gotAsync );
+        std::cout<< "Received CMD_DATA. contents: "<< std::endl;
         command.getNode()->send( CMD_DATA_REPLY )
             << command.get< uint32_t >() << ++_counter;
-        //TEST( command.get< std::string >() == payload );
+        std::cout<< command.get<std::string>() <<std::endl;
         return true;
     }
 
     bool _cmdDataReply( co::ICommand& command )
     {
-        //TEST( !_gotAsync );
+        std::cout<< "Received CMD_REPLY."<< std::endl;
         const uint32_t request = command.get< uint32_t >();
         const uint32_t result = command.get< uint32_t >();
         //TEST( result == ++_counter );
@@ -75,6 +76,7 @@ private:
 
     bool _cmdExit(co::ICommand& command)
     {
+        std::cout<< "Received CMD_EXIT_SERVER."<< std::endl;
         _monitor.set(true);
 
         return true;
