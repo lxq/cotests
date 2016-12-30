@@ -2,16 +2,8 @@
  * my client of Collage. 
  */
 
-#include <co/co.h>
+#include "client.hpp"
 
-enum Commands
-{
-    CMD_ASYNC = co::CMD_NODE_CUSTOM,
-    CMD_SYNC,
-    CMD_DATA,
-    CMD_DATA_REPLY,
-    CMD_EXIT_SERVER
-};
 
 static const std::string payload( "Hi! I am your payload. " );
 
@@ -23,7 +15,7 @@ int main(int argc, char** argv)
     connDesc->type = co::CONNECTIONTYPE_TCPIP;
     connDesc->setHostname( "localhost" );
 
-    co::LocalNodePtr client = new co::LocalNode();
+    ClientPtr client = new Client();
     client->addConnectionDescription(connDesc);
 
     client->listen();
@@ -37,6 +29,9 @@ int main(int argc, char** argv)
 
     client->connect(serverProxy);
 
+    std::cout<< "client id: " << client->getNodeID() << std::endl;
+    std::cout<< "serverproxy id: "<< serverProxy->getNodeID()<< std::endl;
+
     // send  cmd for testing
     serverProxy->send(CMD_ASYNC);
 
@@ -44,6 +39,7 @@ int main(int argc, char** argv)
         // send for request 
         uint32_t request = client->registerRequest();
         serverProxy->send(CMD_SYNC) << request;
+        // NOTE: 如果Server没有处理Request,则会导致waitRequest进行入阻塞.
         client->waitRequest(request);
     }
 
@@ -56,7 +52,7 @@ int main(int argc, char** argv)
         lunchbox::Request<uint32_t> request = client->registerRequest<uint32_t>();
         serverProxy->send(CMD_DATA) <<request <<payload;
     }
-
+    std::cout<< "end sending." << std::endl;
     client->disconnect(serverProxy);
     client->close();
     client = 0;
