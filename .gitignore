@@ -12,6 +12,7 @@
 *.auto.eqc
 Result_*.rgb*
 ___*
+build/
 conn/build
 conn/.vscode
 comm/build

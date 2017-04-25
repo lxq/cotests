@@ -17,7 +17,7 @@ link_directories(
         $ENV{EQ_ROOT}/build/lib
 )
 
-include(CMakeToolsHelpers OPTIONAL)
+#include(CMakeToolsHelpers OPTIONAL)
 
 add_executable(comm ${SOURCE_FILES})
 
