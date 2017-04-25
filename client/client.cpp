@@ -52,11 +52,13 @@ int main(int argc, char** argv)
         lunchbox::Request<uint32_t> request = client->registerRequest<uint32_t>();
         serverProxy->send(CMD_DATA) <<request <<payload;
     }
-    std::cout<< "end sending." << std::endl;
+    std::cout<< "send CMD_EXIT_SERVER." << std::endl;
+
+    serverProxy->send(CMD_EXIT_SERVER);
+
     client->disconnect(serverProxy);
     client->close();
     client = 0;
-
     co::exit();
 
     return EXIT_SUCCESS;

@@ -27,7 +27,6 @@ public:
         registerCommand( CMD_ASYNC, CmdFunc( this, &Server::_cmdAsync ), q );
         registerCommand( CMD_SYNC, CmdFunc( this, &Server::_cmdSync ), q );
         registerCommand( CMD_DATA, CmdFunc( this, &Server::_cmdData ), q );
-        registerCommand( CMD_DATA_REPLY,CmdFunc( this, &Server::_cmdDataReply ), q );
         registerCommand( CMD_EXIT_SERVER,CmdFunc( this, &Server::_cmdExit ), q );
     }
 
@@ -62,16 +61,6 @@ private:
         command.getRemoteNode()->send( CMD_DATA_REPLY )
             << command.read< uint32_t >() << ++_counter;
         std::cout<<"received contents: "<< command.read<std::string>() <<std::endl;
-        return true;
-    }
-
-    bool _cmdDataReply( co::ICommand& command )
-    {
-        std::cout<< "starting CMD_REPLY."<< std::endl;
-        const uint32_t request = command.read< uint32_t >();
-        const uint32_t result = command.read< uint32_t >();
-        serveRequest( request, result );
-        std::cout<< "ending CMD_REPLY"<< std::endl;
         return true;
     }
 

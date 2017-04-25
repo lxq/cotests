@@ -18,12 +18,14 @@ int main(int argc, char** argv)
 
     server->listen();
     
-    server->waitEQ(true);
+//    server->waitEQ(true);
 
     server->close();
     server = 0;
 
     co::exit();
+
+    std::cout<< "exit server."<< std::endl;
 
     return EXIT_SUCCESS;
 } 
